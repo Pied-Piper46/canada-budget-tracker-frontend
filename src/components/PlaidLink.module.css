@@ -1,0 +1,19 @@
+.button {
+  background-color: #3b82f6; /* blue-500 */
+  color: white;
+  padding: 8px 16px; /* py-2 px-4 */
+  border-radius: 4px; /* rounded */
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #2563eb; /* blue-600 */
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
