@@ -6,49 +6,59 @@ import styles from './PlaidLink.module.css';
 
 interface PlaidLinkProps {
     sessionToken: string;
+    mode: 'initial' | 'update';
     onSuccess: () => void;
 }
 
-export default function PlaidLink({ sessionToken, onSuccess }: PlaidLinkProps) {
+export default function PlaidLink({ sessionToken, mode, onSuccess }: PlaidLinkProps) {
     const [linkToken, setLinkToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const getLinkToken = async () => {
             try {
-                const token = await fetchLinkToken(sessionToken);
+                const token = await fetchLinkToken(sessionToken, mode);
+                console.log(`${mode} link token fetched:`, token ? 'Success' : 'Null');
                 setLinkToken(token);
-            } catch (error) {
-                console.error('Error fetching link token:', error);
+                setError(null);
+            } catch (error: any) {
+                console.error(`Error fetching ${mode} link token:`, error);
+                setError(error.message);
             } finally {
                 setLoading(false);
             }
         };
         getLinkToken();
-    }, [sessionToken]);
+    }, [sessionToken, mode]);
 
     const { open, ready } = usePlaidLink({
         token: linkToken!,
         onSuccess: async (publicToken, metadata) => {
-            try {
-                await exchangePublicToken(publicToken, sessionToken);
-                console.log('metadata:', metadata)
-                onSuccess(); // callback when success.
-            } catch (error) {
-                console.error('Error exchaging public token:', error);
+            console.log(`${mode} mode success:`, { publicToken, metadata });
+            if (mode === 'initial') {
+                try {
+                    await exchangePublicToken(publicToken, sessionToken);
+                    console.log('metadata:', metadata)
+                    onSuccess(); // callback when success.
+                } catch (error) {
+                    console.error('Error exchaging public token:', error);
+                }
+            } else {
+                onSuccess();
             }
         },
         onExit: (err, metadata) => {
-            if (err != null) {
-                console.error('Plaid Link exited with error:', err);
-            }
+            console.log(`${mode} mode exit:`, { err, metadata });
+            if (err) alert(`Plaid Link error: ${err.error_message || 'Unknown error'}`);
         },
-        onEvent: (eventname, metadata) => {
-            console.log('Plaid Link event:', eventname, metadata);
+        onEvent: (eventName, metadata) => {
+            console.log(`${mode} mode event:`, { eventName, metadata });
         },
     });
 
     if (loading) return <div>Loading Plaid Link...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <button
@@ -56,7 +66,7 @@ export default function PlaidLink({ sessionToken, onSuccess }: PlaidLinkProps) {
           disabled={!ready || !linkToken}
           className={styles.button}
         >
-            Connect Bank Account
+            {mode === 'initial' ? 'Connect Bank Account' : 'Reconnect Bank Account'}
         </button>
     );
 }
