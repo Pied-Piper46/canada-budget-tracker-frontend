@@ -2,89 +2,97 @@
 import styles from "./page.module.css";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import PlaidLink from '@/components/PlaidLink';
+import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
+import { login, saveToken, isAuthenticated } from '@/lib/auth';
+
+interface LoginForm {
+  password: string;
+}
 
 export default function LoginPage() {
-  const [sessionToken, setSessionToken] = useState<string | null>(null);
-  const [plaidMode, setPlaidMode] = useState<'initial' | 'update'>('initial');
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
 
   useEffect(() => {
-    setSessionToken('dummy-session-token');
-    setPlaidMode('initial');
-  }, []);
+    // Already authenticated, redirect to dashboard
+    if (isAuthenticated()) {
+      router.push('/dashboard');
+    }
+  }, [router]);
 
-  const handleSync = async () => {
+  const onSubmit = async (data: LoginForm) => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/transactions/sync`, {
-        headers: { 'Authorization': `Bearer ${sessionToken}` },
-      });
-      if (response.status === 400 && response.statusText.includes('Item login required')) {
-        setPlaidMode('update');
-        setError('Please reconnect your CIBC account to continue.');
-      } else if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Sync failed');
-      } else {
-        setError(null);
-        router.push('/dashboard');
-      }
+      const response = await login(data.password);
+      saveToken(response.token, response.expires_at);
+      toast.success('Login successful!');
+      router.push('/dashboard');
     } catch (error: any) {
-      setError(error.message);
+      toast.error(error.message || 'Login failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleConnect = () => {
-    setPlaidMode('initial');
-    setError(null);
-  };
-
-  const handleReconnect = () => {
-    setPlaidMode('update');
-    setError('Please reconnect your CIBC account.');
-  }
-
-  const handlePlaidSuccess = () => {
-    router.push('/dashboard');
-  };
-
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>Canada Budget Tracker</h1>
-        {error && <div className={styles['error-message']}>{error}</div>}
-        <div className={styles['button-container']}>
-          <PlaidLink
-            sessionToken={sessionToken!}
-            mode={plaidMode}
-            onSuccess={handlePlaidSuccess} />
-        </div>
-        <div>
-          {sessionToken && (
-            <div className={styles['button-container']}>
-              <button
-                onClick={handleConnect}
-                className={styles['connect-button']}
-              >
-                Connect Bank Account
-              </button>
-              <button
-                onClick={handleReconnect}
-                className={styles['reconnect-button']}
-              >
-                Reconnect Bank Account
-              </button>
-              <button
-                onClick={handleSync}
-                className={styles['sync-button']}
-              >
-                Get Transactions
-              </button>
+    <>
+      <Toaster position="top-center" />
+      <div className={styles.container}>
+        <div className={styles.terminal}>
+          <div className={styles['terminal-header']}>
+            <div className={styles['terminal-dots']}>
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
-          )}
+            <div className={styles['terminal-title']}>canada-budget-tracker</div>
+          </div>
+          <div className={styles['terminal-body']}>
+            <div className={styles['ascii-art']}>
+              <pre>{`
+    ██████╗██████╗ ████████╗
+   ██╔════╝██╔══██╗╚══██╔══╝
+██║     ██████╔╝   ██║
+██║     ██╔══██╗   ██║
+╚██████╗██████╔╝   ██║
+ ╚═════╝╚═════╝    ╚═╝
+              `}</pre>
+            </div>
+            <div className={styles['login-prompt']}>
+              <p className={styles['prompt-text']}>$ system authentication required</p>
+              <p className={styles['prompt-text']}>$ enter password to continue...</p>
+            </div>
+            <form onSubmit={handleSubmit(onSubmit)} className={styles['login-form']}>
+              <div className={styles['input-group']}>
+                <label className={styles['input-label']}>
+                  <span className={styles['prompt-symbol']}>{'>'}</span>
+                  <input
+                    type="password"
+                    placeholder="password"
+                    className={styles['terminal-input']}
+                    disabled={isLoading}
+                    {...register('password', { required: 'Password is required' })}
+                  />
+                </label>
+              </div>
+              {errors.password && (
+                <p className={styles['error-message']}>
+                  $ error: {errors.password.message}
+                </p>
+              )}
+              <button
+                type="submit"
+                className={styles['submit-button']}
+                disabled={isLoading}
+              >
+                {isLoading ? '$ authenticating...' : '$ enter'}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
