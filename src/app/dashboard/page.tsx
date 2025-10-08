@@ -73,7 +73,6 @@ export default function DashboardPage() {
   };
 
   // Fetch dashboard data (only when account is selected)
-  // revalidateOnFocus: false でウィンドウ切り替え時の自動再取得を無効化
   const { data: monthlyData, error: monthlyError, mutate: mutateMonthly, isLoading: isLoadingMonthly } = useSWR(
     token && selectedAccountId ? ['monthly-summary', selectedAccountId, token] : null,
     () => getDashboardSummary(selectedAccountId!, token!, 'month', getStartDate(12)),
@@ -196,6 +195,23 @@ export default function DashboardPage() {
             </div>
           </div>
         </header>
+
+        {/* No Account Banner */}
+        {accounts.length === 0 && token && !needsReconnect && (
+          <div className={styles.noAccountBanner}>
+            <div className={styles.bannerContent}>
+              <h2 className={styles.bannerTitle}>🏦 Welcome to Canada Budget Tracker</h2>
+              <p className={styles.bannerText}>
+                Connect your bank account to get started. We'll automatically sync your transactions and help you track your spending.
+              </p>
+              <PlaidLink
+                sessionToken={token}
+                mode="initial"
+                onSuccess={handlePlaidSuccess}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Reconnect Banner */}
         {needsReconnect && (
