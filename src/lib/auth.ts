@@ -1,8 +1,17 @@
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
+export interface Account {
+  account_id: string;
+  name: string;
+  official_name?: string;
+  type?: string;
+  subtype?: string;
+}
+
 export interface LoginResponse {
   token: string;
   expires_at: string;
+  accounts: Account[];
 }
 
 export interface LoginRequest {
@@ -33,6 +42,39 @@ export function saveToken(token: string, expiresAt: string): void {
   }
 }
 
+export function saveAccounts(accounts: Account[]): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('accounts', JSON.stringify(accounts));
+  }
+}
+
+export function getAccounts(): Account[] {
+  if (typeof window !== 'undefined') {
+    const accountsJson = localStorage.getItem('accounts');
+    if (accountsJson) {
+      try {
+        return JSON.parse(accountsJson);
+      } catch {
+        return [];
+      }
+    }
+  }
+  return [];
+}
+
+export function saveSelectedAccountId(accountId: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('selected_account_id', accountId);
+  }
+}
+
+export function getSelectedAccountId(): string | null {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('selected_account_id');
+  }
+  return null;
+}
+
 export function getToken(): string | null {
   if (typeof window !== 'undefined') {
     return localStorage.getItem('session_token');
@@ -44,6 +86,8 @@ export function clearToken(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('session_token');
     localStorage.removeItem('token_expires_at');
+    localStorage.removeItem('accounts');
+    localStorage.removeItem('selected_account_id');
   }
 }
 

@@ -1,0 +1,234 @@
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+  grid-column: 1 / -1;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+  font-family: var(--font-geist-sans);
+}
+
+.viewAllButton {
+  background: transparent;
+  border: none;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-geist-sans);
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.viewAllButton:hover {
+  background: #f5f5f5;
+  transform: translateX(4px);
+}
+
+/* Transaction List */
+.transactionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.transactionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  gap: 16px;
+}
+
+.transactionRow:hover {
+  background: #f0f0f0;
+  transform: translateX(4px);
+}
+
+.transactionMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.transactionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.transactionName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  font-family: var(--font-geist-sans);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pendingBadge {
+  display: inline-block;
+  background: #ffc107;
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transactionMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #666;
+  font-family: var(--font-geist-mono);
+}
+
+.transactionDate {
+  white-space: nowrap;
+}
+
+.transactionSeparator {
+  color: #ccc;
+}
+
+.transactionCategory {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transactionAmount {
+  flex-shrink: 0;
+}
+
+.amount {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-geist-mono);
+  white-space: nowrap;
+}
+
+.amount.income {
+  color: #4caf50;
+}
+
+.amount.expense {
+  color: #f44336;
+}
+
+/* No Data */
+.noData {
+  background: #f5f5f5;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 60px 20px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Loading Skeleton */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonRow {
+  height: 60px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .transactionRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .transactionAmount {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .transactionName {
+    white-space: normal;
+  }
+
+  .transactionMeta {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .viewAllButton {
+    align-self: stretch;
+    text-align: left;
+  }
+
+  .transactionName {
+    font-size: 14px;
+  }
+
+  .transactionMeta {
+    font-size: 12px;
+  }
+
+  .amount {
+    font-size: 15px;
+  }
+}
