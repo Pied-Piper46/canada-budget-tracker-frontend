@@ -163,19 +163,21 @@ export async function getRecentTransactions(
 
 export async function syncTransactions(token: string): Promise<SyncResponse> {
   const response = await fetch(`${BACKEND_URL}/transactions/sync`, {
-    method: 'POST',
+    method: 'GET',
     headers: getHeaders(token),
   });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
+    const error = errorData.detail || errorData;
+    console.log(error);
 
     // Check for Item Login Required error
-    if (errorData.error_code === 'ITEM_LOGIN_REQUIRED') {
+    if (error.error_code === 'ITEM_LOGIN_REQUIRED') {
       throw new Error('ITEM_LOGIN_REQUIRED');
     }
 
-    throw new Error(errorData.detail || 'Failed to sync transactions');
+    throw new Error(error.message || errorData.detail || 'Failed to sync transactions');
   }
 
   return response.json();
