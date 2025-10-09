@@ -1,5 +1,30 @@
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
+// Custom error for session expiration
+export class SessionExpiredError extends Error {
+  constructor(message = 'Session expired') {
+    super(message);
+    this.name = 'SessionExpiredError';
+  }
+}
+
+// Fetch wrapper with authentication and error handling
+async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
+  const response = await fetch(url, options);
+
+  if (response.status === 401) {
+    // Import clearToken dynamically to avoid circular dependency
+    if (typeof window !== 'undefined') {
+      const { clearToken } = await import('./auth');
+      clearToken();
+      window.location.href = '/';
+    }
+    throw new SessionExpiredError('Your session has expired. Please login again.');
+  }
+
+  return response;
+}
+
 // Types
 export interface Transaction {
   id: string;
@@ -59,7 +84,7 @@ function getHeaders(token: string) {
 // Plaid Link APIs
 export async function fetchLinkToken(sessionToken: string, mode: 'initial' | 'update'): Promise<string> {
     const endpoint = mode === 'initial' ? '/plaid/link/token/create' : '/plaid/link/token/update';
-    const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+    const response = await fetchWithAuth(`${BACKEND_URL}${endpoint}`, {
         method: 'POST',
         headers: getHeaders(sessionToken),
     });
@@ -72,7 +97,7 @@ export async function fetchLinkToken(sessionToken: string, mode: 'initial' | 'up
 }
 
 export async function exchangePublicToken(publicToken: string, sessionToken: string): Promise<{ status: string }> {
-    const response = await fetch(`${BACKEND_URL}/plaid/item/public_token/exchange`, {
+    const response = await fetchWithAuth(`${BACKEND_URL}/plaid/item/public_token/exchange`, {
         method: 'POST',
         headers: getHeaders(sessionToken),
         body: JSON.stringify({ public_token: publicToken }),
@@ -97,7 +122,7 @@ export async function getDashboardSummary(
     params.append('start_date', startDate);
   }
 
-  const response = await fetch(`${BACKEND_URL}/transactions/summary?${params}`, {
+  const response = await fetchWithAuth(`${BACKEND_URL}/transactions/summary?${params}`, {
     headers: getHeaders(token),
   });
 
@@ -119,7 +144,7 @@ export async function getAssetHistory(
     granularity,
   });
 
-  const response = await fetch(`${BACKEND_URL}/assets/history?${params}`, {
+  const response = await fetchWithAuth(`${BACKEND_URL}/assets/history?${params}`, {
     headers: getHeaders(token),
   });
 
@@ -149,7 +174,7 @@ export async function getRecentTransactions(
     sort_order: 'desc',
   });
 
-  const response = await fetch(`${BACKEND_URL}/transactions/?${params}`, {
+  const response = await fetchWithAuth(`${BACKEND_URL}/transactions/?${params}`, {
     headers: getHeaders(token),
   });
 
@@ -162,7 +187,7 @@ export async function getRecentTransactions(
 }
 
 export async function syncTransactions(token: string): Promise<SyncResponse> {
-  const response = await fetch(`${BACKEND_URL}/transactions/sync`, {
+  const response = await fetchWithAuth(`${BACKEND_URL}/transactions/sync`, {
     method: 'GET',
     headers: getHeaders(token),
   });
