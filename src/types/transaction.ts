@@ -3,13 +3,20 @@
  */
 
 export interface Transaction {
-  id: string;
-  date: string;
+  transaction_id: string;
+  account_id: string;
+  amount: number; // Plaid format: positive = expense, negative = income
+  transaction_date: string;
+  merchant_name: string;
   name: string;
-  amount: number;
-  category: string;
-  type: 'income' | 'expense';
-  pending?: boolean;
+  pending: boolean;
+  pending_transaction_id: string | null;
+  personal_finance_category_primary: string;
+  personal_finance_category_detailed: string;
+  custom_category_id: string | null;
+  created_at: string;
+  updated_at: string;
+  is_removed: boolean;
 }
 
 export interface PeriodSummary {

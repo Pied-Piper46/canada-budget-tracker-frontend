@@ -15,6 +15,11 @@ export default function RecentTransactions({
 }: RecentTransactionsProps) {
   const router = useRouter();
 
+  // Determine transaction type from Plaid amount (positive = expense, negative = income)
+  const getTransactionType = (amount: number): 'income' | 'expense' => {
+    return amount > 0 ? 'expense' : 'income';
+  };
+
   // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-CA', {
@@ -71,39 +76,42 @@ export default function RecentTransactions({
 
       {transactions.length > 0 ? (
         <div className={styles.transactionList}>
-          {transactions.map((transaction) => (
-            <div key={transaction.id} className={styles.transactionRow}>
-              <div className={styles.transactionMain}>
-                <div className={styles.transactionInfo}>
-                  <div className={styles.transactionName}>
-                    {transaction.name}
-                    {transaction.pending && (
-                      <span className={styles.pendingBadge}>Pending</span>
-                    )}
-                  </div>
-                  <div className={styles.transactionMeta}>
-                    <span className={styles.transactionDate}>
-                      {formatDate(transaction.date)}
-                    </span>
-                    <span className={styles.transactionSeparator}>•</span>
-                    <span className={styles.transactionCategory}>
-                      {formatCategory(transaction.category)}
-                    </span>
+          {transactions.map((transaction) => {
+            const transactionType = getTransactionType(transaction.amount);
+            return (
+              <div key={transaction.transaction_id} className={styles.transactionRow}>
+                <div className={styles.transactionMain}>
+                  <div className={styles.transactionInfo}>
+                    <div className={styles.transactionName}>
+                      {transaction.merchant_name || transaction.name}
+                      {transaction.pending && (
+                        <span className={styles.pendingBadge}>Pending</span>
+                      )}
+                    </div>
+                    <div className={styles.transactionMeta}>
+                      <span className={styles.transactionDate}>
+                        {formatDate(transaction.transaction_date)}
+                      </span>
+                      <span className={styles.transactionSeparator}>•</span>
+                      <span className={styles.transactionCategory}>
+                        {formatCategory(transaction.personal_finance_category_primary)}
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <div className={styles.transactionAmount}>
+                  <span
+                    className={`${styles.amount} ${
+                      transactionType === 'income' ? styles.income : styles.expense
+                    }`}
+                  >
+                    {transactionType === 'income' ? '+' : '-'}
+                    {formatCurrency(transaction.amount)}
+                  </span>
+                </div>
               </div>
-              <div className={styles.transactionAmount}>
-                <span
-                  className={`${styles.amount} ${
-                    transaction.type === 'income' ? styles.income : styles.expense
-                  }`}
-                >
-                  {transaction.type === 'income' ? '+' : '-'}
-                  {formatCurrency(transaction.amount)}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className={styles.noData}>
