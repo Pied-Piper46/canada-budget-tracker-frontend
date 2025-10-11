@@ -25,6 +25,25 @@ export default function IncomeSummaryCard({
 
   const chartData = activeTab === 'week' ? weeklyData : monthlyData;
 
+  // Get current period label from latest monthly data
+  const getCurrentPeriodLabel = (): string => {
+    if (monthlyData.length === 0) return 'This Month';
+
+    const latestPeriod = monthlyData[monthlyData.length - 1]?.period;
+    if (!latestPeriod) return 'This Month';
+
+    // Parse month format (e.g., "2025-10")
+    const monthMatch = latestPeriod.match(/^(\d{4})-(\d{2})$/);
+    if (monthMatch) {
+      const year = monthMatch[1];
+      const month = parseInt(monthMatch[2]) - 1;
+      const date = new Date(parseInt(year), month);
+      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    }
+
+    return 'This Month';
+  };
+
   // Format period label based on type
   const formatPeriodLabel = (period: string): string => {
     // Check if it's a week format (e.g., "2025-W01")
@@ -133,6 +152,9 @@ export default function IncomeSummaryCard({
   return (
     <div className={styles.card}>
       <h2 className={styles.cardTitle}>Income & Expenses</h2>
+
+      {/* Current Period Section Header */}
+      <div className={styles.sectionHeader}>{getCurrentPeriodLabel()} |</div>
 
       {/* Current Period Stats */}
       <div className={styles.summaryStats}>

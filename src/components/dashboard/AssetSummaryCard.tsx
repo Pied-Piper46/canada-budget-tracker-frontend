@@ -73,7 +73,7 @@ export default function AssetSummaryCard({
       </div>
 
       <div className={styles.assetChange}>
-        <span className={styles.changeLabel}>｜ Last month {'>'} </span>
+        <span className={styles.changeLabel}>Last month {'>'} </span>
         <span className={change < 0 ? styles.negative : styles.positive}>
           {formatCurrency(change)} ({formatPercent(changePct)})
         </span>

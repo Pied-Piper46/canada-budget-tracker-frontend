@@ -13,10 +13,21 @@
 }
 
 .cardTitle {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: #000;
   margin: 0 0 16px 0;
+  font-family: var(--font-geist-sans);
+}
+
+/* Section Header */
+.sectionHeader {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
   font-family: var(--font-geist-sans);
 }
 
