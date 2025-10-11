@@ -46,57 +46,45 @@ export default function LoginPage() {
     <>
       <Toaster position="top-center" />
       <div className={styles.container}>
-        <div className={styles.terminal}>
-          <div className={styles['terminal-header']}>
-            <div className={styles['terminal-dots']}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div className={styles['terminal-title']}>canada-budget-tracker</div>
+        <div className={styles.loginBox}>
+          {/* Logo */}
+          <div className={styles.logo}>
+            <pre className={styles.logoText}>{`
+  ██████╗ ██████╗ ████████╗
+██╔════╝ ██╔══██╗╚══██╔══╝
+██║      ██████╔╝   ██║
+██║      ██╔══██╗   ██║
+╚██████╗ ██████╔╝   ██║
+ ╚═════╝ ╚═════╝    ╚═╝
+`}
+            </pre>
+            <h1 className={styles.appName}>Canada Budget Tracker</h1>
           </div>
-          <div className={styles['terminal-body']}>
-            <div className={styles['ascii-art']}>
-              <pre>{`
-    ██████╗██████╗ ████████╗
-   ██╔════╝██╔══██╗╚══██╔══╝
-██║     ██████╔╝   ██║
-██║     ██╔══██╗   ██║
-╚██████╗██████╔╝   ██║
- ╚═════╝╚═════╝    ╚═╝
-              `}</pre>
-            </div>
-            <div className={styles['login-prompt']}>
-              <p className={styles['prompt-text']}>$ system authentication required</p>
-              <p className={styles['prompt-text']}>$ enter password to continue...</p>
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)} className={styles['login-form']}>
-              <div className={styles['input-group']}>
-                <label className={styles['input-label']}>
-                  <span className={styles['prompt-symbol']}>{'>'}</span>
-                  <input
-                    type="password"
-                    placeholder="password"
-                    className={styles['terminal-input']}
-                    disabled={isLoading}
-                    {...register('password', { required: 'Password is required' })}
-                  />
-                </label>
-              </div>
-              {errors.password && (
-                <p className={styles['error-message']}>
-                  $ error: {errors.password.message}
-                </p>
-              )}
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.loginForm}>
+            <div className={styles.inputGroup}>
+              <input
+                type="password"
+                placeholder="Password"
+                className={styles.passwordInput}
+                disabled={isLoading}
+                {...register('password', { required: 'Password is required' })}
+              />
               <button
                 type="submit"
-                className={styles['submit-button']}
+                className={styles.submitButton}
                 disabled={isLoading}
               >
-                {isLoading ? '$ authenticating...' : '$ enter'}
+                {isLoading ? 'Loading...' : 'Login'}
               </button>
-            </form>
-          </div>
+            </div>
+            {errors.password && (
+              <p className={styles.errorMessage}>
+                {errors.password.message}
+              </p>
+            )}
+          </form>
         </div>
       </div>
     </>
