@@ -174,7 +174,7 @@ export default function DashboardPage() {
                   >
                     {accounts.map((account) => (
                       <option key={account.account_id} value={account.account_id}>
-                        {account.name || account.official_name || account.account_id}
+                        {account.account_name || account.account_official_name || account.account_id}
                       </option>
                     ))}
                   </select>

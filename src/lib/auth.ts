@@ -2,10 +2,11 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:800
 
 export interface Account {
   account_id: string;
-  name: string;
-  official_name?: string;
-  type?: string;
-  subtype?: string;
+  account_name: string | null;
+  account_official_name?: string | null;
+  account_type?: string | null;
+  created_at?: string;
+  last_synced_at?: string | null;
 }
 
 export interface LoginResponse {
