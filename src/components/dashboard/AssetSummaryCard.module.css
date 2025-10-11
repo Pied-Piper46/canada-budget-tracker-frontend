@@ -36,11 +36,15 @@
   font-weight: 600;
 }
 
-.assetChange.positive {
+.changeLabel {
+  color: #000;
+}
+
+.positive {
   color: #4caf50;
 }
 
-.assetChange.negative {
+.negative {
   color: #f44336;
 }
 
