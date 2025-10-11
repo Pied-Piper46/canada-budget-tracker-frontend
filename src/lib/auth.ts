@@ -1,23 +1,6 @@
+import type { Account, LoginRequest, LoginResponse } from '@/types';
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-
-export interface Account {
-  account_id: string;
-  account_name: string | null;
-  account_official_name?: string | null;
-  account_type?: string | null;
-  created_at?: string;
-  last_synced_at?: string | null;
-}
-
-export interface LoginResponse {
-  token: string;
-  expires_at: string;
-  accounts: Account[];
-}
-
-export interface LoginRequest {
-  password: string;
-}
 
 export async function login(password: string): Promise<LoginResponse> {
   const response = await fetch(`${BACKEND_URL}/auth/login`, {

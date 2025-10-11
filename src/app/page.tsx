@@ -5,15 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import { login, saveToken, saveAccounts, saveSelectedAccountId, isAuthenticated } from '@/lib/auth';
-
-interface LoginForm {
-  password: string;
-}
+import type { LoginRequest } from '@/types';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginRequest>();
 
   useEffect(() => {
     // Already authenticated, redirect to dashboard
@@ -22,7 +19,7 @@ export default function LoginPage() {
     }
   }, [router]);
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (data: LoginRequest) => {
     setIsLoading(true);
     try {
       const response = await login(data.password);

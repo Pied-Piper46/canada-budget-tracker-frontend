@@ -9,16 +9,15 @@ import {
   clearToken,
   getAccounts,
   getSelectedAccountId,
-  saveSelectedAccountId,
-  type Account
+  saveSelectedAccountId
 } from '@/lib/auth';
 import {
   syncTransactions,
   getDashboardSummary,
   getAssetHistory,
-  getRecentTransactions,
-  type Transaction
+  getRecentTransactions
 } from '@/lib/api';
+import type { Account, Transaction } from '@/types';
 import AssetSummaryCard from '@/components/dashboard/AssetSummaryCard';
 import IncomeSummaryCard from '@/components/dashboard/IncomeSummaryCard';
 import RecentTransactions from '@/components/dashboard/RecentTransactions';

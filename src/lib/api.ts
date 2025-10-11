@@ -1,3 +1,5 @@
+import type { Transaction, DashboardSummary, AssetHistory, SyncResponse } from '@/types';
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
 // Custom error for session expiration
@@ -23,54 +25,6 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
   }
 
   return response;
-}
-
-// Types
-export interface Transaction {
-  id: string;
-  date: string;
-  name: string;
-  amount: number;
-  category: string;
-  type: 'income' | 'expense';
-  pending?: boolean;
-}
-
-export interface PeriodSummary {
-  period: string;
-  period_start?: string;
-  period_end?: string;
-  income: number;
-  expense: number;
-  net: number;
-  transaction_count: number;
-}
-
-export interface DashboardSummary {
-  period_summaries: PeriodSummary[];
-  total_income: number;
-  total_expense: number;
-  net_total: number;
-  total_transactions: number;
-}
-
-export interface AssetHistory {
-  current_balance: number;
-  balance_history: Array<{
-    period: string;
-    period_start?: string;
-    period_end?: string;
-    balance: number;
-    change?: number;
-    change_pct?: number;
-  }>;
-}
-
-export interface SyncResponse {
-  synced_count: number;
-  latest_transaction_date: string;
-  sync_status: 'success' | 'partial' | 'failed';
-  errors?: string[];
 }
 
 // Helper function to create headers with auth token

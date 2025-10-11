@@ -1,18 +1,12 @@
 'use client';
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import type { PeriodSummary } from '@/types';
 import styles from './IncomeSummaryCard.module.css';
 
-interface PeriodData {
-  period: string;
-  income: number;
-  expense: number;
-  net: number;
-}
-
 interface IncomeSummaryCardProps {
-  weeklyData: PeriodData[];
-  monthlyData: PeriodData[];
+  weeklyData: PeriodSummary[];
+  monthlyData: PeriodSummary[];
   currentIncome: number;
   currentExpense: number;
   currentNet: number;

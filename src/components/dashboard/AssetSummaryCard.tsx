@@ -1,17 +1,11 @@
 'use client';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { BalanceHistoryItem } from '@/types';
 import styles from './AssetSummaryCard.module.css';
-
-interface AssetData {
-  period: string;
-  balance: number;
-  change?: number;
-  change_pct?: number;
-}
 
 interface AssetSummaryCardProps {
   currentBalance: number;
-  balanceHistory: AssetData[];
+  balanceHistory: BalanceHistoryItem[];
   isLoading?: boolean;
 }
 

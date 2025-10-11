@@ -1,17 +1,8 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
+import type { Transaction } from '@/types';
 import styles from './RecentTransactions.module.css';
-
-interface Transaction {
-  id: string;
-  date: string;
-  name: string;
-  amount: number;
-  category: string;
-  type: 'income' | 'expense';
-  pending?: boolean;
-}
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
