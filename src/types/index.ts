@@ -9,7 +9,7 @@ export type { Account } from './account';
 export type { LoginRequest, LoginResponse } from './auth';
 
 // Transaction types
-export type { Transaction, PeriodSummary, DashboardSummary } from './transaction';
+export type { Transaction, PeriodSummary, DashboardSummary, TransactionListResponse } from './transaction';
 
 // Asset types
 export type { BalanceHistoryItem, AssetHistory } from './asset';

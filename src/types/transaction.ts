@@ -36,3 +36,10 @@ export interface DashboardSummary {
   net_total: number;
   total_transactions: number;
 }
+
+export interface TransactionListResponse {
+  transactions: Transaction[];
+  total: number;
+  limit: number;
+  offset: number;
+}

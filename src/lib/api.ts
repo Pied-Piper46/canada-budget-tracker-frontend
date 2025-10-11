@@ -1,6 +1,9 @@
-import type { Transaction, DashboardSummary, AssetHistory, SyncResponse } from '@/types';
+import type { Transaction, DashboardSummary, AssetHistory, SyncResponse, TransactionListResponse } from '@/types';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+
+// Re-export types for backward compatibility
+export type { Transaction, DashboardSummary, AssetHistory, SyncResponse, TransactionListResponse };
 
 // Custom error for session expiration
 export class SessionExpiredError extends Error {
@@ -112,6 +115,47 @@ export async function getAssetHistory(
     }
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.detail || 'Failed to fetch asset history');
+  }
+
+  return response.json();
+}
+
+export interface GetTransactionsParams {
+  accountId: string;
+  startDate?: string;
+  endDate?: string;
+  limit?: number;
+  offset?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  includeRemoved?: boolean;
+  includePending?: boolean;
+}
+
+export async function getTransactions(
+  token: string,
+  params: GetTransactionsParams
+): Promise<TransactionListResponse> {
+  const queryParams = new URLSearchParams({
+    account_id: params.accountId,
+    limit: (params.limit || 50).toString(),
+    offset: (params.offset || 0).toString(),
+    sort_by: params.sortBy || 'transaction_date',
+    sort_order: params.sortOrder || 'desc',
+    include_removed: (params.includeRemoved || false).toString(),
+    include_pending: (params.includePending !== false).toString(),
+  });
+
+  if (params.startDate) queryParams.append('start_date', params.startDate);
+  if (params.endDate) queryParams.append('end_date', params.endDate);
+
+  const response = await fetchWithAuth(`${BACKEND_URL}/transactions/?${queryParams}`, {
+    headers: getHeaders(token),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || 'Failed to fetch transactions');
   }
 
   return response.json();
